@@ -33,6 +33,9 @@ SOFTWARE.
 
 /* Private typedef */
 /* Private define  */
+#define LED_ON	 	1 << 5
+#define LED_OFF		0 << 5
+#define MODE		1 << 5*2;
 /* Private macro */
 /* Private variables */
 /* Private function prototypes */
@@ -46,6 +49,8 @@ SOFTWARE.
 **
 **===========================================================================
 */
+int button = 0;
+
 int main(void)
 {
   int i = 0;
@@ -68,12 +73,23 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
-
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+  GPIOA->MODER |= 0x400;
+  GPIOA->OTYPER &= ~0x20;
+  GPIOA->OSPEEDR |= 0xC00;
+  GPIOA->PUPDR |= 0x400;
+  //GPIOA->ODR |= 0x20;
+  GPIOA->BSRRL |= 1 << 5;
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+  GPIOC->MODER &= ~0xC000000;
+  GPIOC->OTYPER &= ~(1 << 13);
+  GPIOC->PUPDR &= ~0xC000000;
 
   /* Infinite loop */
   while (1)
   {
-	i++;
+	  button = GPIOC->IDR & (1 << 13);
+	  i++;
   }
   return 0;
 }
